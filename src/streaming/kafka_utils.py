@@ -1,6 +1,7 @@
 from kafka import KafkaProducer, KafkaConsumer
 from json import dumps, loads
 from src.data_processing.feature_selection import prepare_data
+import time
 
 def kafka_producer():
     producer = KafkaProducer(
@@ -9,7 +10,9 @@ def kafka_producer():
     )
 
     df = prepare_data()
-    for index, row in df.iterrows():  
+    
+    for index, row in df.iterrows():
+        time.sleep(3)  
         producer.send("kafka_workshop3", value=row.to_dict()) 
         print(f"Message sent: {row.to_dict()}")
 
@@ -19,7 +22,7 @@ def kafka_consumer():
     consumer = KafkaConsumer(
         'kafka_workshop3',
         auto_offset_reset='earliest',
-        enable_auto_commit=True,
+        #enable_auto_commit=True,
         group_id='my-group-1',
         value_deserializer=lambda m: loads(m.decode('utf-8')),
         bootstrap_servers=['localhost:9092']

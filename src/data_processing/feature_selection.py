@@ -11,7 +11,7 @@ def prepare_data():
     """
 
     # Define the directory containing the CSV files
-    data_dir = "../data/"
+    data_dir = "./data/"
 
     # Define the file names for each year
     file_names = [

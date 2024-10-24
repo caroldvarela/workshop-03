@@ -68,35 +68,24 @@ def load_data(df):
     try:
         inspector = inspect(engine)
 
-        if inspector.has_table('country_data'):
+        # Verificar si la tabla 'country_data' ya existe
+        if not inspector.has_table('country_data'):
             try:
-                CountryData.__table__.drop(engine)
-                print("Existing table 'country_data' dropped successfully.")
+                CountryData.__table__.create(engine)
+                print("Table 'country_data' creation was successful.")
             except SQLAlchemyError as e:
-                print(f"Error dropping table: {e}")
+                print(f"Error creating table: {e}")
                 raise
 
-        try:
-            CountryData.__table__.create(engine)
-            print("Table 'country_data' creation was successful.")
-        except SQLAlchemyError as e:
-            print(f"Error creating table: {e}")
-            raise
-
-    except SQLAlchemyError as error:
-        print(f"An error occurred: {error}")
-        return None
-
-    try:
+        # Cargar datos en la tabla
         with engine.connect() as connection:
-            df.drop_duplicates(subset='id', inplace=True)
             df.drop_duplicates(subset='id', inplace=True)
             df.to_sql('country_data', connection, if_exists='append', index=False)
             print("Data loaded successfully into 'country_data'.")
         return df
 
-    except Exception as e:
-        print(f"An error occurred while loading data: {e}")
+    except SQLAlchemyError as error:
+        print(f"An error occurred: {error}")
         return None
 
     finally:

@@ -15,7 +15,7 @@ def kafka_producer():
     X_test, y_test = prepare_data()
     
     for index in range(len(X_test)):
-        time.sleep(3)  
+        time.sleep(5)  
         row = X_test.iloc[index].to_dict()
         row['score'] = float(y_test.iloc[index])
         producer.send("kafka_workshop3", value=row)  
@@ -37,12 +37,8 @@ def kafka_consumer():
         for m in consumer:
             print(f"Message received: {m.value}")
             data = m.value
-            print('\n',data)
             original_score = data.pop('score', None)
-            print('\n',data)
-            print('\nData keys:', data.keys())
             df = predict_and_save_score(data)
-            print('\n',df)
             df['score'] = original_score
             load_data(df)
     except Exception as e:

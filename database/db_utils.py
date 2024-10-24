@@ -89,7 +89,8 @@ def load_data(df):
 
     try:
         with engine.connect() as connection:
-            df.drop_duplicates(subset='country', inplace=True)
+            df.drop_duplicates(subset='id', inplace=True)
+            df.drop_duplicates(subset='id', inplace=True)
             df.to_sql('country_data', connection, if_exists='append', index=False)
             print("Data loaded successfully into 'country_data'.")
         return df

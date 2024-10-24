@@ -151,6 +151,21 @@ def prepare_data():
     # One-hot encode the 'Region' categorical variable
     df = pd.get_dummies(df, columns=['Region'], drop_first=True)
 
+    # Rename region columns to match the SQLAlchemy model
+    region_cols = {
+        'Region_Central and Eastern Europe': 'Region_Central_and_Eastern_Europe',
+        'Region_Eastern Asia': 'Region_Eastern_Asia',
+        'Region_Latin America and Caribbean': 'Region_Latin_America_and_Caribbean',
+        'Region_Middle East and Northern Africa': 'Region_Middle_East_and_Northern_Africa',
+        'Region_North America': 'Region_North_America',
+        'Region_Southeastern Asia': 'Region_Southeastern_Asia',
+        'Region_Southern Asia': 'Region_Southern_Asia',
+        'Region_Sub-Saharan Africa': 'Region_Sub_Saharan_Africa',
+        'Region_Western Europe': 'Region_Western_Europe',
+    }
+
+    df.rename(columns=region_cols, inplace=True)
+
     # Drop the 'Country' column as it's not needed for modeling
     df.drop(columns=['Country'], axis=1, inplace=True)
 
@@ -165,5 +180,5 @@ def prepare_data():
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
     # Return the test features
-    return X_test
+    return X_test, y_test
 

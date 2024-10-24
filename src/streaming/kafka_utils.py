@@ -3,10 +3,8 @@ from json import dumps, loads
 from src.data_processing.feature_selection import prepare_data
 from src.predictions.save_predictions import predict_and_save_score
 import time
-import logging
-
-logging.basicConfig(level=logging.INFO, 
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+from database.db_utils import load_data
+import pandas as pd
 
 def kafka_producer():
     producer = KafkaProducer(
@@ -14,31 +12,38 @@ def kafka_producer():
         bootstrap_servers=['localhost:9092'],
     )
 
-    df = prepare_data()
+    X_test, y_test = prepare_data()
     
-    for index, row in df.iterrows():
+    for index in range(len(X_test)):
         time.sleep(3)  
-        producer.send("kafka_workshop3", value=row.to_dict()) 
-        print(f"Message sent: {row.to_dict()}")
+        row = X_test.iloc[index].to_dict()
+        row['score'] = float(y_test.iloc[index])
+        producer.send("kafka_workshop3", value=row)  
+        print(f"Message sent: {row}")
 
     producer.flush() 
 
 def kafka_consumer():
     consumer = KafkaConsumer(
         'kafka_workshop3',
-        auto_offset_reset='earliest',
-        #enable_auto_commit=True,
+        #auto_offset_reset='lastest',
+        enable_auto_commit=True,
         group_id='my-group-1',
         value_deserializer=lambda m: loads(m.decode('utf-8')),
         bootstrap_servers=['localhost:9092']
     )
 
-    logging.info("Iniciando el consumidor...")
-
-    for m in consumer:
-        print(f"Message received: {m.value}")
-        predict_and_save_score(m.value)
-
-if __name__ == "__main__":
-    kafka_producer()
-    kafka_consumer()
+    try:
+        for m in consumer:
+            print(f"Message received: {m.value}")
+            data = m.value
+            print('\n',data)
+            original_score = data.pop('score', None)
+            print('\n',data)
+            print('\nData keys:', data.keys())
+            df = predict_and_save_score(data)
+            print('\n',df)
+            df['score'] = original_score
+            load_data(df)
+    except Exception as e:
+        print(f"Error: {e}")

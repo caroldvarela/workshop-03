@@ -1,6 +1,5 @@
 import joblib
 import pandas as pd
-from database.db_utils import load_data
 
 model = joblib.load('models/best_model_Random_Forest.pkl')
 
@@ -17,5 +16,5 @@ def predict_and_save_score(data):
 
     df['score_predicted'] = score
 
+    return df
 
-    load_data(df)

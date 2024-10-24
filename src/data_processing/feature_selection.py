@@ -154,6 +154,9 @@ def prepare_data():
     # Drop the 'Country' column as it's not needed for modeling
     df.drop(columns=['Country'], axis=1, inplace=True)
 
+    # Add an 'id' column
+    df.insert(0, 'id', range(1, len(df) + 1))
+
     # Define features (X) and target variable (y)
     X = df.drop(columns=['Score'])  # Features
     y = df['Score']  # Target variable

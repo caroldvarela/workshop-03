@@ -1,7 +1,12 @@
 from kafka import KafkaProducer, KafkaConsumer
 from json import dumps, loads
 from src.data_processing.feature_selection import prepare_data
+from src.predictions.save_predictions import predict_and_save_score
 import time
+import logging
+
+logging.basicConfig(level=logging.INFO, 
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 
 def kafka_producer():
     producer = KafkaProducer(
@@ -28,8 +33,11 @@ def kafka_consumer():
         bootstrap_servers=['localhost:9092']
     )
 
+    logging.info("Iniciando el consumidor...")
+
     for m in consumer:
         print(f"Message received: {m.value}")
+        predict_and_save_score(m.value)
 
 if __name__ == "__main__":
     kafka_producer()

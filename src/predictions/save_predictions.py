@@ -1,7 +1,7 @@
 import joblib
 import pandas as pd
 
-model = joblib.load('models/best_model_Random_Forest.pkl')
+model = joblib.load('models/best_model_Random_forest.pkl')
 
 def predict_and_save_score(data):
     """

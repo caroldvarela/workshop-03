@@ -68,7 +68,6 @@ def load_data(df):
     try:
         inspector = inspect(engine)
 
-        # Verificar si la tabla 'country_data' ya existe
         if not inspector.has_table('country_data'):
             try:
                 CountryData.__table__.create(engine)
@@ -77,7 +76,6 @@ def load_data(df):
                 print(f"Error creating table: {e}")
                 raise
 
-        # Cargar datos en la tabla
         with engine.connect() as connection:
             df.drop_duplicates(subset='id', inplace=True)
             df.to_sql('country_data', connection, if_exists='append', index=False)

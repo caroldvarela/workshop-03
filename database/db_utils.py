@@ -46,7 +46,7 @@ def build_engine():
         port = config('PGPORT')
         db = config('PGDB')
     except UndefinedValueError as e:
-        print(f"Missing environment variable: {e}")
+        print(f"\nMissing environment variable: {e}")
         raise
 
     database_url = (f"{dialect}://{user}:{passwd}@{host}:{port}/{db}")
@@ -54,10 +54,10 @@ def build_engine():
     # Test the connection
     try:
         engine = create_engine(database_url)
-        print(f"Successfully connected to the database {db}!")
+        print(f"\nSuccessfully connected to the database {db}!")
         return engine
     except SQLAlchemyError as e:
-        print(f"Failed to connect to the database: {e}")
+        print(f"\nFailed to connect to the database: {e}")
 
 
 def load_data(df):
@@ -71,19 +71,19 @@ def load_data(df):
         if not inspector.has_table('country_data'):
             try:
                 CountryData.__table__.create(engine)
-                print("Table 'country_data' creation was successful.")
+                print("\nTable 'country_data' creation was successful.")
             except SQLAlchemyError as e:
-                print(f"Error creating table: {e}")
+                print(f"\nError creating table: {e}")
                 raise
 
         with engine.connect() as connection:
             df.drop_duplicates(subset='id', inplace=True)
             df.to_sql('country_data', connection, if_exists='append', index=False)
-            print("Data loaded successfully into 'country_data'.")
+            print("\nData loaded successfully into 'country_data'.")
         return df
 
     except SQLAlchemyError as error:
-        print(f"An error occurred: {error}")
+        print(f"\nAn error occurred: {error}")
         return None
 
     finally:

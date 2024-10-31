@@ -186,7 +186,7 @@ First, you need to have a few things installed. Here’s a brief tutorial on how
    ```bash
    pip install -r requirements.txt
 
-4. **Configure Kafka and Database**  
+4. **Configure Kafka**  
    Set up the Kafka service using Docker:
    ```bash
    docker compose up -d

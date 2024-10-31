@@ -15,7 +15,7 @@ def kafka_producer():
     X_test, y_test = prepare_data()
     
     for index in range(len(X_test)):
-        time.sleep(5)  
+        time.sleep(2)  
         row = X_test.iloc[index].to_dict()
         row['score'] = float(y_test.iloc[index])
         producer.send("kafka_workshop3", value=row)  
